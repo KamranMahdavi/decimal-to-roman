@@ -13,7 +13,7 @@ import java.io.IOException;
 import javafx.scene.control.Alert;
 import java.lang.ProcessBuilder;
 
-public class RomanToDecimalConverter extends Application{
+public class NumberConverter extends Application{
 
     private TextField romanField;
     private TextField decimalField;
