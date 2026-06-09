@@ -29,19 +29,30 @@ def isHex(txt):
     
     return True
 
-def check(format, number):
+def check(form, number):
     if not isinstance(number, str):
         raise TypeError("Invalid input type.")
-    if format == "Bin":
+    if form == "Bin":
         if not isbin(number):
             raise ValueError("Input should be a binary number.")
-    elif format == "Dec":
+    elif form == "Dec":
         if not number.isdecimal():
             if not number[0] == "-" or not number[1::].isdecimal():
                 raise ValueError("Input should consist only of digits.")
-    elif format == "Hex":
+    elif form == "Hex":
         if not isHex(number):
             raise ValueError("Input should be a valid hexadecimal number.")
+
+def binary_minimalizer(number):
+    if len(number) < 2:
+        return number
+    
+    new_number = number
+    for i in range(len(number) - 1):
+        if new_number[0] == new_number[1]:
+            new_number = new_number[1:]
+
+    return new_number
 
 def bin_flipper(number):
     new_number = number
@@ -66,12 +77,45 @@ def bin_flipper(number):
 
     return new_number
 
+def sign_extender(number):
+    remainder = len(number) % 4
+
+    if remainder == 0:
+        return number
+    
+    else:
+        result = (4 - remainder) * number[0] + number
+        return result
+
 def space_remover(number):
     number_list = number.split(" ")
     joint_number = "".join(number_list)
     return joint_number
     
+def binary_to_decimal_help(number):
+    decimal_number = 0
+    current_power = 0
+
+    for i in range(len(number) - 1, -1, -1):
+        decimal_number += int(number[i]) * math.exp2(current_power)
+        current_power += 1
     
+    return str(int(decimal_number))
+
+def decimal_to_binary_help(number, signed=True):
+    int_number = number
+    binary_number = ""
+
+    while(int_number != 0):
+        binary_number = str(int(int_number % 2)) + binary_number
+        int_number //= 2
+
+    if signed == True:
+        if number > 0:
+            binary_number = "0" + binary_number
+
+    return binary_number
+
 def decimal_to_roman(number):
     ones = {0: '', 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI', 7: 'VII', 8: 'VIII', 9: 'IX'}
     tens = {0: '', 10: 'X', 20: 'XX', 30: 'XXX', 40: 'XL', 50: 'L', 60: 'LX', 70: 'LXX', 80: 'LXXX', 90: 'XC'}
@@ -116,46 +160,61 @@ def roman_to_decimal(number):
 
     return decimal_form
 
-
-def binary_to_decimal(number):
+def binary_to_decimal(number, signed=True):
     modified_number = space_remover(number)
     check("Bin", modified_number)
+
+    toRet = None
+
+    if signed == True:
+        if modified_number[0] == "1":
+
+            if "1" in modified_number[1:]:
+                modified_number = bin_flipper(modified_number)
+
+            toRet = "-" + binary_to_decimal_help(modified_number)
+
+        else:
+            toRet = binary_to_decimal_help(modified_number)
     
-    if modified_number[0] == "1":
-        new_number = bin_flipper(modified_number)
-        return "-" + binary_to_decimal(new_number)
+    if signed == False:
+        toRet = binary_to_decimal_help(modified_number)
 
-    decimal_number = 0
-    current_power = 0
+    return toRet
 
-    for i in range(len(modified_number) - 1, -1, -1):
-        decimal_number += int(modified_number[i]) * math.exp2(current_power)
-        current_power += 1
-    
-    return str(int(decimal_number))
-
-def decimal_to_binary(number):
+def decimal_to_binary(number, signed=True, canonical=True):
     new_number = space_remover(number)
     check("Dec", new_number)
+    toRet = None
     
     int_number = int(new_number)
-    if int_number < 0:
-        positive_binary = decimal_to_binary(str(abs(int_number)))
-        return bin_flipper(positive_binary)
 
     if int_number == 0:
-        return "0"
+        toRet = "0"
+    
+    elif signed == False:
+        int_number = abs(int_number)
+        toRet = decimal_to_binary_help(int_number, signed=False)
 
-    binary_number = ""
+    elif canonical == False:
 
-    while(int_number != 0):
-        binary_number = str(int(int_number % 2)) + binary_number
-        int_number //= 2
+        if int_number < 0:
+            raw_binary = decimal_to_binary_help(abs(int_number))
+            toRet = bin_flipper(raw_binary)
 
-    if binary_number[0] == "1":
-        binary_number = "0" + binary_number
+        else:
+            toRet = decimal_to_binary_help(int_number)
 
-    return binary_number
+    elif canonical == True:
+
+        if int_number < 0:
+            raw_binary = decimal_to_binary_help(abs(int_number))
+            toRet = binary_minimalizer(bin_flipper(raw_binary))
+
+        else:
+            toRet = binary_minimalizer(decimal_to_binary_help(int_number))
+
+    return toRet
 
 
 def binary_to_hex(number):
@@ -178,11 +237,11 @@ def binary_to_hex(number):
     hex_list.reverse()
 
     for bits in hex_list:
-        decimal_bits = int(binary_to_decimal(bits))
+        decimal_bits = int(binary_to_decimal("0" + bits))
         if decimal_bits < 10:
             hex_number += str(decimal_bits)
         else:
-            hex_number += hex_num_list[10 - decimal_bits]
+            hex_number += hex_num_list[decimal_bits - 10]
 
     return hex_number
 
@@ -197,41 +256,55 @@ def hex_to_binary(number):
             result = decimal_to_binary(char)[1::]
             binary_number += (4 - len(result)) * "0" + result
         elif char.isalpha():
-            result = 10 + hex_num_list.index(char.upper)
+            result = 10 + hex_num_list.index(char.upper())
             result = decimal_to_binary(str(result))[1::]
             binary_number += result
     
     return binary_number
 
 
-def decimal_to_hex(number):
-    binary_number = decimal_to_binary(number)
-    hex_number = binary_to_hex(binary_number)
-    return hex_number
+# if signed=True then it's 2's complement
+def decimal_to_hex(number, signed=True):
+    toRet = None
+    
+    if signed == True:
+        binary_number = decimal_to_binary(number)
+        extended_number = sign_extender(binary_number)
+        toRet = binary_to_hex(extended_number)
 
-def hex_to_decimal(number):
+    else:
+        binary_number = decimal_to_binary(number, signed=False)
+        toRet = binary_to_hex(binary_number)
+        if int(number) < 0:
+            toRet = "-" + toRet
+    
+    return toRet
+
+def hex_to_decimal(number, signed=True):
+    toRet = None
+
     binary_number = hex_to_binary(number)
-    decimal_number = binary_to_decimal(binary_number)
-    return decimal_number
+    toRet = binary_to_decimal(binary_number, signed)
 
+    return toRet
 
 def roman_to_binary(number):
     decimal_number = roman_to_decimal(number)
-    binary_number = decimal_to_binary(decimal_number)
+    binary_number = decimal_to_binary(str(decimal_number), signed=False)
     return binary_number
 
 def binary_to_roman(number):
-    decimal_number = binary_to_decimal(number)
+    decimal_number = binary_to_decimal(number, signed=False)
     roman_number = decimal_to_roman(decimal_number)
     return roman_number
 
 
 def roman_to_hex(number):
     decimal_number = roman_to_decimal(number)
-    hex_number = decimal_to_hex(decimal_number)
+    hex_number = decimal_to_hex(decimal_number, signed=False)
     return hex_number
 
 def hex_to_roman(number):
-    decimal_number = hex_to_decimal(number)
+    decimal_number = hex_to_decimal(number, signed=False)
     roman_number = decimal_to_roman(decimal_number)
     return roman_number
