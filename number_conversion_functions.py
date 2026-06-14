@@ -117,6 +117,10 @@ def decimal_to_binary_help(number, signed=True):
     return binary_number
 
 def decimal_to_roman(number):
+    check("Dec", number)
+    if int(number) <= 0:
+        raise ValueError("Input must be only positive.")
+
     ones = {0: '', 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI', 7: 'VII', 8: 'VIII', 9: 'IX'}
     tens = {0: '', 10: 'X', 20: 'XX', 30: 'XXX', 40: 'XL', 50: 'L', 60: 'LX', 70: 'LXX', 80: 'LXXX', 90: 'XC'}
     hundreds = {0: '', 100: 'C', 200: 'CC', 300: 'CCC', 400: 'CD', 500: 'D', 600: 'DC', 700: 'DCC', 800: 'DCCC', 900: 'CM'}
@@ -131,7 +135,8 @@ def decimal_to_roman(number):
 
 def roman_to_decimal(number):
     check("Roman", number)
-    
+    number = number.upper()
+
     values = {'I': 1, 'IV': 4, 'V': 5, 'IX': 9, 'X': 10, 'XL': 40, 'L': 50, 'XC': 90, 'C': 100, 'CD': 400, 'D': 500, 'CM': 900, 'M': 1000}
     hierarchy = {'I': 0, 'V': 1, 'X': 2, 'L': 3, 'C': 4, 'D': 5, 'M': 6}
     value_list_1 = []
@@ -154,7 +159,7 @@ def roman_to_decimal(number):
     value_list_2 = [values[i] for i in value_list_1]
 
     decimal_form = sum(value_list_2)
-    canonical_roman_form = decimal_to_roman(decimal_form)
+    canonical_roman_form = decimal_to_roman(str(decimal_form))
     if original_number.upper() != canonical_roman_form:
         raise ValueError('Invalid number format')
 
@@ -301,6 +306,7 @@ def binary_to_roman(number):
 
 def roman_to_hex(number):
     decimal_number = roman_to_decimal(number)
+    decimal_number = str(decimal_number)
     hex_number = decimal_to_hex(decimal_number, signed=False)
     return hex_number
 
