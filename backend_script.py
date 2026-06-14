@@ -1,23 +1,20 @@
 from number_conversion_functions import *
 import sys
 
-input_form = sys.argv[1].upper()
-output_form = sys.argv[2].upper()
+form_codes = {"Binary": "BIN", "Decimal": "DEC", "Hexadecimal": "HEX", "Roman": "RMN"}
+
+input_form = form_codes[sys.argv[1]]
+output_form = form_codes[sys.argv[2]]
 number = sys.argv[3]
-mode = sys.argv[4] if len(sys.argv) > 4 else "SIGNED"
+# True means signed
+mode = True if sys.argv[4] == "true" else False
 
 try:
     match input_form, output_form:
         case "BIN", "DEC":
-            if mode == "SIGNED":
-                print(binary_to_decimal(number)) 
-            else:
-                print(binary_to_decimal(number, signed=False))
+            print(binary_to_decimal(number, mode)) 
         case "DEC", "BIN":
-            if mode == "SIGNED":
-                print(decimal_to_binary(number))
-            else:
-                print(decimal_to_binary(number, signed=False))
+            print(decimal_to_binary(number, mode))
         case "BIN", "HEX":
             print(binary_to_hex(number))
         case "HEX", "BIN":
@@ -27,15 +24,9 @@ try:
         case "RMN", "BIN":
             print(roman_to_binary(number))
         case "DEC", "HEX": 
-            if mode == "SIGNED":
-                print(decimal_to_hex(number))
-            else:
-                print(decimal_to_hex(number, signed=False))
+            print(decimal_to_hex(number, mode))
         case "HEX", "DEC":
-            if mode == "SIGNED":
-                print(hex_to_decimal(number))
-            else:
-                print(hex_to_decimal(number, signed=False))
+            print(hex_to_decimal(number, mode))
         case "DEC", "RMN":
             print(decimal_to_roman(number))
         case "RMN", "DEC":
