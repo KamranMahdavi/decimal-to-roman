@@ -1,0 +1,70 @@
+NumberConverter Help
+
+Conversion Rules:
+
+• Decimal to
+
+  ◦ Roman: Since Roman numerals are only valid for positive values, the 
+    converter will not accept negative or zero input.
+
+  ◦ Binary: Has two different switches:
+
+    1. Signed: If active, the output will be a two's complement binary. If 
+       unsigned, the output will be the binary representation of the absolute 
+       value of the input.
+
+    2. Canonical: If active, truncates the leading bits.
+
+  ◦ Hexadecimal: Provides two ways to output the Hexadecimal:
+
+    1. Two's complement: When active, the resulting output will be the 
+       hexadecimal representation of the decimal's two's complement binary. 
+       The decimal input is converted to signed binary, sign extended, and 
+       then converted to hexadecimal.
+
+    2. Negative sign: The output is the unsigned equivalent of the absolute 
+       value of the decimal number, with a negative sign "-" added to its left 
+       if the input is negative.
+
+
+• Binary to
+
+  ◦ Decimal: Two options:
+
+    1. Signed: In signed mode, the input will be treated as two's complement. 
+       If the leftmost bit is 1, then the output is going to be negative. For 
+       a positive output the leading bit will always have to be 0.
+
+    2. Unsigned: the input will always be treated as positive.
+
+  ◦ Hexadecimal: Pads the the binary input with leading zeros if its number of 
+     digits is not a multiple of 4, and then converts it to hexadecimal.
+
+  ◦ Roman: Since Roman numerals are always positive, the binary input is 
+     treated as unsigned. The binary value is first converted to a decimal, and
+     then to a Roman numeral.
+
+
+• Hexadecimal to
+
+  ◦ Binary: Replaces each hex digit with a 4-bit binary equivalent.
+
+  ◦ Decimal: Two options:
+
+    1. Signed: The hexadecimal input will be treated as signed (two's
+       complement) and will be converted accordingly.
+
+    2. Unsigned: The hexadecimal input will always be treated as positive.
+
+  ◦ Roman: The input will be treated as unsigned.
+
+
+• Roman to
+
+  ◦ Decimal: The input Roman numeral has to be in valid form. For instance, 
+     "XIV" is a valid Roman numeral, while "IVX" is not.
+
+  ◦ Binary: The Roman numeral is converted to a decimal number, then the 
+     decimal number is converted to an unsigned binary value.
+
+  ◦ Hexadecimal: The output hex number will be unsigned. 
