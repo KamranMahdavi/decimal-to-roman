@@ -1,27 +1,38 @@
-# Decimal to Roman Converter
+# Number Converter
 
-A JavaFX application that converts between Roman numerals and decimal numbers by invoking Python scripts that run using functions from the `roman_decimal_functions.py` module.
+A JavaFX application that converts between Decimal, Binary, Hexadecimal, and Roman numerals. Uses a Python backend script for conversion logic.
 
 ## Features
-- Converts Roman numerals to decimal numbers and decimal numbers to Roman numerals
+
+- Supports 12 conversion options
+- Signed and unsigned interpretation for binary and hexadecimal numbers
 - Accepts lowercase input for Roman numerals and ignores leading and trailing spaces
+- Dynamic dropdown menus that allow for selecting conversion options
+- Swap button to reverse conversion modes
 - Displays Descriptive error messages in popup windows
-- Validates input Roman numeral before conversion
-- Combines JavaFX GUI frontend with Python backend scripts
+- In-app help window
+- Uses a JavaFX GUI frontend with a Python backend script
 
 ## How it works
 
-### Roman to Decimal
-1. User enters a Roman numeral in the Roman numeral field
-2. Java GUI invokes `roman_to_decimal_backend.py` and passes it the input
-3. The Python script validates the numeral and returns the decimal form if valid
-4. Java GUI receives it back and displays it in the decimal number field
+The JavaFX GUI records the input value, source form, target form, and other conversion options (such as the signed mode value) and passes them to the Python backend script, invoking it through ProcessBuilder.
 
-### Decimal to Roman
-1. User enters a decimal number in the decimal number field
-2. Java GUI invokes `decimal_to_roman_backend.py` and passes it the input
-3. The Python script converts the decimal number to its canonical Roman numeral equivalent
-4. Java GUI receives the result from the script and displays it in the Roman numeral field
+The backend script translates the received conversion forms, and based on them, selects the appropriate function from the core functions module and sends the result back to the GUI for display.
+
+## Structure
+
+- `number_conversion_functions.py`: Core conversion functions module
+- `backend_script.py`: Python backend script that connects the GUI to the core functions module
+- `NumberConverter.java`: JavaFX GUI frontend application
+- `Help.txt`: In-app help file
+
+## How to Run
+
+- Download all files mentioned in the [Structure](#structure) section
+- Make sure they are all in the same directory
+- Make sure Python 3.10+ is installed (necessary for the match-case statements)
+- Make sure JavaFX is installed (necessary for compiling the GUI file)
+- Compile and run `NumberConverter.java` using JavaFX
 
 ## Example
 
@@ -29,24 +40,40 @@ A JavaFX application that converts between Roman numerals and decimal numbers by
 Roman Numeral: XIV
 Decimal Number: 14
 
-Roman Numeral: MMXXVI
-Decimal Number: 2026
+Binary Number: 1001
+Status: signed
+Decimal Number: -7
 
-Decimal Number: 944
-Roman Numeral: CMXLIV
+Hexadecimal Number: BEEF
+Binary Number: 1011111011101111
+
+Decimal Number: -1008
+Status: signed (two's complement)
+Hexadecimal Number: C10
+
+Decimal Number: -1008
+Status: unsigned (explicit sign notation)
+Hexadecimal Number: -3F0
 
 Roman Numeral: IVX
 Error: Invalid Roman numeral
-
 ```
+
+## Screenshots
+
+### Main Application
+
+![main-app](screenshots/main-app.png)
+
+### Error Popup
+
+![error-popup](screenshots/error-popup.png)
+
+### Help Info
+
+![help-info](screenshots/help-info-window.png)
 
 ## Notes
 
-The files the application needs in order to run correctly:
-
-- `roman_decimal_functions.py`
-- `decimal_to_roman_backend.py`
-- `roman_to_decimal_backend.py`
-- `RomanToDecimalConverter.java` (needs compilation before execution)
-
-Please make sure all of these files are saved in the same folder when you are downloading them.
+- For a more precise and detailed description of conversion rules, click the in-app info button and refer to the help window, or manually read the `Help.txt` file.
+- Some conversion results might differ depending on whether the signed box is checked or not.
